@@ -72,6 +72,13 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+/* Global form element styling for visibility */
+input, select, textarea {
+  background-color: #ffffff;
+  color: #333333;
+  border: 1px solid #ccc; /* Ensure border is visible */
+}
+
 /* Removing unnecessary default Vite styles */
 .card {
   /* Remove or redefine if needed */

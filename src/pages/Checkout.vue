@@ -210,12 +210,20 @@ h2 {
   box-sizing: border-box;
   font-size: 1em;
   transition: border-color 0.2s ease;
+  background-color: #ffffff; /* Ensure white background */
+  color: #333333; /* Ensure dark text color */
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   border-color: #007bff;
   outline: none;
+}
+
+/* Placeholder color */
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #888888; /* Ensure placeholder is visible */
 }
 
 .form-group input.is-invalid,

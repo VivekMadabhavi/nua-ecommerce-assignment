@@ -29,7 +29,16 @@
           <p class="product-price">${{ product.price }}</p>
           <div class="product-actions">
             <router-link :to="`/product/${product.id}`" class="view-details-button">View Details</router-link>
-            <button @click="addProductToCart(product)" class="add-to-cart-button">Add to Cart</button>
+            <template v-if="getProductQuantity(product.id) === 0">
+              <button @click="addProductToCart(product)" class="add-to-cart-button">Add to Cart</button>
+            </template>
+            <template v-else>
+              <div class="quantity-controls">
+                <button @click="decreaseQuantityFromListing(product)" class="quantity-button">-</button>
+                <span class="quantity">{{ getProductQuantity(product.id) }}</span>
+                <button @click="increaseQuantityFromListing(product)" class="quantity-button">+</button>
+              </div>
+            </template>
           </div>
         </div>
       </template>
@@ -38,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, reactive } from 'vue'
 import { fetchProducts as apiFetchProducts, fetchCategories as apiFetchCategories } from '../utils/api'
 import ProductCardSkeleton from '../components/ProductCardSkeleton.vue'
 import { useDebouncedRef } from '../hooks/useDebounce'
@@ -50,8 +59,15 @@ const loading = ref(true)
 const error = ref(null)
 const searchQuery = useDebouncedRef('')
 const selectedCategory = ref('')
+// const addedToCartStates = reactive({}) // No longer needed, quantity will control UI
 
 const cartStore = useCartStore()
+
+// Computed property to get quantity of a product in cart
+const getProductQuantity = (productId) => {
+  const item = cartStore.cartItems.find(item => item.product.id === productId)
+  return item ? item.quantity : 0
+}
 
 const fetchProducts = async () => {
   try {
@@ -75,8 +91,23 @@ const fetchCategories = async () => {
 }
 
 const addProductToCart = (product) => {
-  cartStore.addItem(product, 1) // Add 1 unit of the product
-  console.log(`Added ${product.title} to cart from listing page.`)
+  cartStore.addItem(product, 1)
+  // No need for addedToCartStates, UI will react to cart quantity
+}
+
+const increaseQuantityFromListing = (product) => {
+  const currentQuantity = getProductQuantity(product.id)
+  cartStore.updateQuantity(product.id, currentQuantity + 1)
+}
+
+const decreaseQuantityFromListing = (product) => {
+  const currentQuantity = getProductQuantity(product.id)
+  if (currentQuantity > 1) {
+    cartStore.updateQuantity(product.id, currentQuantity - 1)
+  } else {
+    // If quantity becomes 0, remove from cart entirely
+    cartStore.removeItem(product.id)
+  }
 }
 
 const filteredProducts = computed(() => {
@@ -172,10 +203,18 @@ onMounted(() => {
   border: 1px solid #ccc;
   font-size: 1em;
   width: 200px; /* Consistent width for inputs */
+  background-color: #ffffff; /* Ensure white background */
+  color: #333333; /* Ensure dark text color */
 }
 
 .filters select {
   background-color: white;
+  color: #333333; /* Ensure text in select is also dark */
+}
+
+.filters select option {
+  color: #333333; /* Ensure option text is dark */
+  background-color: #ffffff; /* Ensure option background is white */
 }
 
 .error-message {
@@ -193,6 +232,34 @@ onMounted(() => {
   width: 100%;
 }
 
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.quantity-button {
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: background-color 0.2s ease;
+}
+
+.quantity-button:hover {
+  background-color: #d0d0d0;
+}
+
+.quantity {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+}
+
 .add-to-cart-button {
   background-color: #007bff; /* Blue */
   color: white;
@@ -207,6 +274,11 @@ onMounted(() => {
 
 .add-to-cart-button:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.add-to-cart-button.added-to-cart {
+  background-color: #28a745; /* Green for added to cart */
   transform: translateY(-2px);
 }
 

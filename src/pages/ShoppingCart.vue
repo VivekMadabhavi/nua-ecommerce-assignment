@@ -141,6 +141,12 @@ h1 {
   border: 1px solid #ccc;
   font-size: 0.95em;
   background-color: white;
+  color: #333333; /* Ensure text color is visible */
+}
+
+.cart-item-quantity select option {
+  color: #333333; /* Ensure option text color is visible */
+  background-color: #ffffff; /* Ensure option background is white */
 }
 
 .cart-item-subtotal {

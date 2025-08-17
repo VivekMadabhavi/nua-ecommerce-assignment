@@ -1,11 +1,20 @@
 <script setup>
+import { useCartStore } from './stores/cart'
+import { computed } from 'vue'
+
+const cartStore = useCartStore()
+const cartItemCount = computed(() => cartStore.itemCount)
+
+const displayCartText = computed(() => {
+  return cartItemCount.value > 0 ? `Cart (${cartItemCount.value})` : 'Cart'
+})
 </script>
 
 <template>
   <div>
     <nav>
       <router-link to="/">Products</router-link>
-      <router-link to="/cart">Cart</router-link>
+      <router-link to="/cart">{{ displayCartText }}</router-link>
     </nav>
     <router-view v-slot="{ Component }">
       <transition name="fade" mode="out-in">

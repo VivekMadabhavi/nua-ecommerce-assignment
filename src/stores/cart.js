@@ -40,6 +40,4 @@ export const useCartStore = defineStore('cart', {
 })
 
 // Subscribe to changes in the cart items and save to localStorage
-useCartStore().$subscribe((mutation, state) => {
-  localStorage.setItem('cartItems', JSON.stringify(state.items))
-})
+// This block will be moved to main.js
