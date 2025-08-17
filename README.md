@@ -48,7 +48,7 @@ This project is a mini e-commerce website built with Vue.js, Vite, Vue Router, a
 
 This application is hosted live on [Netlify](https://www.netlify.com/), offering a seamless and responsive user experience. You can access the live demo here: 
 
-[Your Netlify Site URL Here](https://your-netlify-site-name.netlify.app)
+[https://nuaassignmentvivek.netlify.app](https://nuaassignmentvivek.netlify.app)
 
 Netlify was chosen for its excellent support for Single Page Applications (SPAs) and continuous deployment capabilities, ensuring a smooth user experience even with client-side routing.
 
