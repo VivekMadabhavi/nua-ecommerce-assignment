@@ -109,7 +109,7 @@ To set up and run the project locally:
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repo-url>
+    git clone https://github.com/VivekMadabhavi/nua-ecommerce-assignment.git
     cd nua_assignment
     ```
 
