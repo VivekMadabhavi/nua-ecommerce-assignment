@@ -22,23 +22,14 @@
             <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
           </select>
         </div>
-        <template v-if="productQuantityInCart === 0">
-          <button @click="addToCart" class="add-to-cart-button">Add to Cart</button>
-        </template>
-        <template v-else>
-          <div class="quantity-controls-detail">
-            <button @click="decreaseQuantityFromDetail" class="quantity-button-detail">-</button>
-            <span class="quantity-detail">{{ productQuantityInCart }}</span>
-            <button @click="increaseQuantityFromDetail" class="quantity-button-detail">+</button>
-          </div>
-        </template>
+        <button @click="addToCart" class="add-to-cart-button">Add to Cart</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cart'
 import { fetchProductById as apiFetchProductById } from '../utils/api'
@@ -49,16 +40,9 @@ const router = useRouter()
 const product = ref(null)
 const loading = ref(true)
 const error = ref(null)
-const quantity = ref(1) // Quantity for initial add via dropdown
+const quantity = ref(1)
 
 const cartStore = useCartStore()
-
-// Computed property to get the current quantity of this product in the cart
-const productQuantityInCart = computed(() => {
-  if (!product.value) return 0
-  const item = cartStore.cartItems.find(item => item.product.id === product.value.id)
-  return item ? item.quantity : 0
-})
 
 const fetchProduct = async (id) => {
   try {
@@ -73,33 +57,10 @@ const fetchProduct = async (id) => {
   }
 }
 
-// This function will now only be called when the product is not in the cart yet
 const addToCart = () => {
   if (product.value) {
     cartStore.addItem(product.value, quantity.value)
     console.log(`Added ${quantity.value} of ${product.value.title} to cart`)
-    quantity.value = 1; // Reset quantity selector after adding
-  }
-}
-
-const increaseQuantityFromDetail = () => {
-  if (product.value) {
-    const currentQuantity = productQuantityInCart.value
-    // Prevent adding more than 5 from detail page, consistent with initial dropdown
-    if (currentQuantity < 5) {
-        cartStore.updateQuantity(product.value.id, currentQuantity + 1)
-    }
-  }
-}
-
-const decreaseQuantityFromDetail = () => {
-  if (product.value) {
-    const currentQuantity = productQuantityInCart.value
-    if (currentQuantity > 1) {
-      cartStore.updateQuantity(product.value.id, currentQuantity - 1)
-    } else if (currentQuantity === 1) {
-      cartStore.removeItem(product.value.id)
-    }
   }
 }
 
@@ -115,8 +76,6 @@ onMounted(() => {
 watch(() => route.params.id, (newId) => {
   if (newId) {
     fetchProduct(newId)
-    // Also reset quantity and ensure productQuantityInCart is reactive
-    quantity.value = 1; 
   }
 })
 </script>
@@ -139,39 +98,6 @@ watch(() => route.params.id, (newId) => {
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
-}
-
-/* New styles for quantity controls on detail page */
-.quantity-controls-detail {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Center buttons horizontally */
-  gap: 15px;
-  margin-top: 20px; /* Space from other elements */
-  margin-bottom: 20px;
-}
-
-.quantity-button-detail {
-  background-color: #e0e0e0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 8px 15px; /* Larger padding for better touch targets */
-  cursor: pointer;
-  font-size: 1.3em;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
-}
-
-.quantity-button-detail:hover {
-  background-color: #d0d0d0;
-}
-
-.quantity-detail {
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #333;
-  min-width: 30px; /* Ensure space for quantity */
-  text-align: center;
 }
 
 .product-detail-image {
