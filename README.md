@@ -136,7 +136,7 @@ To set up and run the project locally:
 
 ## Design Decisions and Trade-offs
 
-1.  **Framework Choice (Vue.js)**: Initially, there was a misunderstanding and the project was set up as React. Upon correction, Vue.js was adopted as per user's stated preference (implicitly chosen by the `npm create vite` command). Vue 3 with Composition API (`<script setup>`) offers a clean and efficient way to manage component logic and state.
+1.  **Framework Choice (Vue.js)**: Vue.js 3 was chosen as the primary frontend framework for this project. Its Composition API with `<script setup>` provides a clean, efficient, and highly maintainable way to organize component logic and state. This choice aligns with best practices for building modern, performant Single Page Applications.
 
 2.  **State Management (Pinia)**: Pinia was chosen over Vuex due to its simpler API, better TypeScript support (though not explicitly used here, it's a good practice consideration), and lighter weight. It provides a centralized store for cart management, making it easy to access and modify cart data across components.
 
